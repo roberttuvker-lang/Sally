@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sally</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sally">
+<meta name="theme-color" content="#14110E">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" href="icon.png">
+<style>
+  :root{
+    --bg:#14110E; --surface:#1F1A15; --surface2:#2A231C; --line:#3A3128;
+    --text:#EDE6DB; --muted:#9A8E7D; --faint:#6B6053;
+    --ember:#FF8A3D; --ember-deep:#C9550C;
+    --steel:#67B3C0; --steel-deep:#2F6571;
+    --climb:#8AD08C; --hold:#E8B341;
+    --mono: ui-monospace,"SF Mono","Cascadia Mono","JetBrains Mono",Menlo,Consolas,monospace;
+    --sans:"Helvetica Neue",Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{background:var(--bg)}
+  body{margin:0;color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.45;
+    -webkit-tap-highlight-color:transparent}
+  .wrap{max-width:900px;margin:0 auto;
+    padding:calc(20px + env(safe-area-inset-top)) calc(16px + env(safe-area-inset-right)) calc(64px + env(safe-area-inset-bottom)) calc(16px + env(safe-area-inset-left))}
+  .eyebrow{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:var(--ember);font-weight:700;margin:0 0 4px}
+  h1{font-size:30px;font-weight:800;letter-spacing:-.02em;margin:0 0 2px}
+  h1 .d{color:var(--ember)}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 22px}
+  .sub b.f{color:var(--steel)} .sub b.c{color:var(--ember)}
+  .secTitle{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);font-weight:700;margin:30px 0 12px}
+
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .panelRow{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field .lab{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .seg{display:flex;background:var(--surface2);border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .seg button{background:transparent;border:0;color:var(--muted);font-family:var(--sans);font-weight:700;font-size:13px;padding:11px 16px;cursor:pointer;transition:.12s}
+  .seg button.on{background:var(--surface);color:var(--text)}
+  .seg button.on.ember{color:var(--ember)} .seg button.on.steel{color:var(--steel)}
+  input[type=text]{background:var(--surface2);border:1px solid var(--line);color:var(--text);font-family:var(--mono);font-size:16px;padding:11px 12px;border-radius:9px;outline:none;width:150px}
+  input[type=text]:focus{border-color:var(--ember)}
+  input::placeholder{color:var(--faint)}
+  input[type=date]{background:var(--surface2);border:1px solid var(--line);color:var(--text);font-family:var(--mono);font-size:13px;padding:10px;border-radius:9px;outline:none;color-scheme:dark}
+  input[type=date]:focus{border-color:var(--ember)}
+  .btn{background:var(--ember);color:#241200;border:0;font-family:var(--sans);font-weight:800;font-size:14px;padding:12px 20px;border-radius:9px;cursor:pointer;white-space:nowrap;transition:.12s}
+  .btn:active{background:#ffa05f}
+  .inputHint{font-size:11px;color:var(--faint);font-family:var(--mono);margin-top:9px}
+
+  .recent{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+  .recent .secTitle{margin:0 0 8px}
+  .row{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:13px;padding:7px 0;border-top:1px dashed var(--line)}
+  .row:first-of-type{border-top:0}
+  .row .lift{color:var(--text);font-weight:600;width:58px}
+  .row .date{color:var(--faint);width:50px;font-size:12px}
+  .row .tag{font-size:10px;font-weight:700;letter-spacing:.04em;padding:2px 7px;border-radius:999px;text-transform:uppercase}
+  .row .tag.raw{color:var(--ember);background:#241404;border:1px solid #5a3417}
+  .row .tag.band{color:var(--steel);background:#0c1d21;border:1px solid #244e57}
+  .row .t{margin-left:auto;font-size:15px;font-weight:600}
+  .row .x{background:transparent;border:0;color:var(--faint);cursor:pointer;font-size:18px;padding:2px 6px;line-height:1}
+  .row .x:active{color:var(--ember)}
+  .empty{color:var(--faint);font-family:var(--mono);font-size:12px;padding:6px 0}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:680px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .lifthead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+  .liftname{font-size:18px;font-weight:800;letter-spacing:-.01em}
+  .badge{font-size:10px;font-weight:700;letter-spacing:.04em;padding:4px 9px;border-radius:999px;text-transform:uppercase;border:1px solid transparent;white-space:nowrap}
+  .badge.climb{color:var(--climb);border-color:#2f5a31;background:#16200f}
+  .badge.hold{color:var(--hold);border-color:#5a4a1c;background:#211a0c}
+  .badge.base{color:var(--muted);border-color:var(--line);background:var(--surface2)}
+  .gaugeRow{display:flex;gap:16px;align-items:stretch}
+  .gauge{position:relative;width:46px;border-radius:8px;border:1px solid var(--line);min-height:118px;flex:0 0 auto;overflow:hidden;background:linear-gradient(180deg,rgba(255,138,61,.16),rgba(103,179,192,.10))}
+  .gCeil{position:absolute;left:0;right:0;height:2px;background:var(--ember);top:14%}
+  .gFloor{position:absolute;left:0;right:0;height:2px;background:var(--steel);top:62%}
+  .gToday{position:absolute;left:50%;transform:translateX(-50%);width:14px;height:14px;border-radius:50%;background:var(--text);border:2px solid var(--bg);box-shadow:0 0 0 1px var(--ember)}
+  .stats{flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px}
+  .stat .lab{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .stat .val{font-family:var(--mono);font-size:30px;font-weight:600;line-height:1}
+  .stat.ceil .val{color:var(--ember)} .stat.floor .val{color:var(--steel)}
+  .stat .hint{font-size:11px;color:var(--faint);margin-top:1px}
+  .metaRow{display:flex;gap:14px;margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}
+  .meta{flex:1}
+  .meta .lab{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .meta .v{font-family:var(--mono);font-size:16px;font-weight:600;margin-top:2px}
+  .spark{display:flex;gap:4px;align-items:flex-end;height:38px;margin-top:14px}
+  .bar{flex:1;border-radius:3px 3px 0 0;min-height:3px;background:var(--surface2)}
+  .bar.raw{background:linear-gradient(180deg,var(--ember),var(--ember-deep))}
+  .bar.band{background:linear-gradient(180deg,var(--steel),var(--steel-deep))}
+
+  .songCard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 18px 30px;margin-bottom:14px}
+  .songHead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+  .songName{font-size:17px;font-weight:800}
+  .songPct{font-family:var(--mono);font-size:15px;color:var(--ember);font-weight:600}
+  .reach{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .reach b{color:var(--ember);font-weight:600}
+  .track{position:relative;height:34px;background:var(--surface2);border:1px solid var(--line);border-radius:8px;overflow:visible;margin:16px 0 0}
+  .fill{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--ember-deep),var(--ember));border-radius:7px 0 0 7px;transition:width .45s}
+  .mark{position:absolute;top:-3px;bottom:-3px;width:2px;background:rgba(237,230,219,.30)}
+  .mark.wall{background:var(--ember);width:3px;box-shadow:0 0 8px rgba(255,138,61,.6)}
+  .mark.fin{background:var(--climb);width:3px}
+  .markLab{position:absolute;top:100%;transform:translateX(-50%);font-family:var(--mono);font-size:9px;color:var(--faint);white-space:nowrap;margin-top:5px;line-height:1.3;text-align:center}
+  .markLab.wall{color:var(--ember);font-weight:600}
+  .markLab.fin{color:var(--climb)}
+
+  .phase{display:grid;grid-template-columns:auto 1fr auto;gap:10px 12px;align-items:center;font-size:12px;padding:9px 0;border-top:1px solid var(--line)}
+  .phase:first-of-type{border-top:0}
+  .phN{font-family:var(--mono);color:var(--ember);font-weight:600;font-size:11px;white-space:nowrap}
+  .phTitle{font-weight:700}.phTitle span{display:block;color:var(--muted);font-weight:400;font-size:11px;margin-top:1px}
+  .phTgt{font-family:var(--mono);color:var(--steel);font-size:11px;text-align:right;white-space:nowrap}
+  .note{font-size:12px;color:var(--faint);margin-top:22px;line-height:1.55}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">3:24 to the floor</p>
+  <h1>Bring Sally Up<span class="d">.</span></h1>
+  <p class="sub">Two clocks: a <b class="f">floor</b> you defend, a <b class="c">ceiling</b> you chase. Aim up every day; the floor rides up behind your best.</p>
+  <div id="app"></div>
+  <p class="note" id="footnote"></p>
+</div>
+
+<script>
+const SONG=204;
+const HOLDS=[
+  {t:40,  l:"hold 1", cls:""},
+  {t:89,  l:"1:29 · THE WALL\nmost people stall", cls:"wall"},
+  {t:128, l:"hold 3", cls:""},
+  {t:170, l:"final hold\n← kill zone", cls:""}
+];
+const LIFTS=[{k:"pull",n:"Pull-ups"},{k:"dip",n:"Dips"}];
+const KEY=k=>`bsu_log_${k}`;
+const DB={};
+const ui={lift:"pull", band:false, date:todayStr()};
+
+/* ---- localStorage (works on any hosted page) ---- */
+function load(){ for(const L of LIFTS){ try{ const raw=localStorage.getItem(KEY(L.k)); DB[KEY(L.k)]=raw?JSON.parse(raw):{logs:[]}; }catch(e){ DB[KEY(L.k)]={logs:[]}; } } }
+function save(k){ try{ localStorage.setItem(KEY(k), JSON.stringify(DB[KEY(k)])); }catch(e){ console.error(e); } }
+
+/* ---- time + date ---- */
+function parseT(s){ s=(s||"").trim(); if(!s) return null;
+  if(s.includes(":")){ const[a,b]=s.split(":"); const m=parseInt(a||"0",10),sec=parseInt(b||"0",10); if(isNaN(m)||isNaN(sec)) return null; return m*60+sec; }
+  const d=s.replace(/\D/g,""); if(!d) return null;
+  const sec=parseInt(d.slice(-2),10); const min=parseInt(d.slice(0,-2)||"0",10); return min*60+sec; }
+function fmt(sec){ if(sec==null) return "—"; sec=Math.round(sec); const m=Math.floor(sec/60),s=sec%60; return m+":"+String(s).padStart(2,"0"); }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function isoWeek(dstr){ const d=new Date(dstr+"T00:00:00"); const t=new Date(d); t.setDate(t.getDate()+3-((d.getDay()+6)%7)); const w1=new Date(t.getFullYear(),0,4); return t.getFullYear()+"-W"+String(1+Math.round(((t-w1)/864e5-3+((w1.getDay()+6)%7))/7)).padStart(2,"0"); }
+function curWeek(){ return isoWeek(todayStr()); }
+function prevWeek(){ const d=new Date(); d.setDate(d.getDate()-7); return isoWeek(d.toISOString().slice(0,10)); }
+
+/* ---- analysis ---- */
+function analyze(k){
+  const logs=DB[KEY(k)].logs.slice().sort((a,b)=>a.d<b.d?-1:1);
+  let bestRaw=null,bestBand=null;
+  logs.forEach(l=>{ if(l.band){ if(bestBand==null||l.t>bestBand)bestBand=l.t; } else { if(bestRaw==null||l.t>bestRaw)bestRaw=l.t; } });
+  const ceiling=bestRaw, floor=bestRaw==null?null:Math.max(0,bestRaw-10);
+  const wb=w=>{ let b=null; logs.filter(l=>!l.band&&isoWeek(l.d)===w).forEach(l=>{if(b==null||l.t>b)b=l.t;}); return b; };
+  const tw=wb(curWeek()), pw=wb(prevWeek());
+  let status="base"; if(tw!=null&&pw!=null){ if(tw>pw+1)status="climb"; else if(Math.abs(tw-pw)<=1)status="hold"; else status="base"; }
+  const last=logs.length?(logs.filter(l=>!l.band).slice(-1)[0]||logs.slice(-1)[0]):null;
+  const bandFull=logs.filter(l=>l.band&&l.t>=SONG-1).length;
+  return {logs,ceiling,floor,bestBand,tw,pw,status,last,reach:bestRaw||0,bandFull};
+}
+function statusText(s){ return s==="climb"?"Climbing":s==="hold"?"Holding · add a 2nd set":"Building baseline"; }
+
+/* ---- render ---- */
+function render(){
+  document.getElementById("app").innerHTML =
+    logPanel() + `<div class="secTitle">Floor &amp; ceiling</div>` + dashboard() +
+    `<div class="secTitle">The song · 3:24</div>` + songSection() + planSection();
+  wire();
+  document.getElementById("footnote").textContent="Saved on this device. Floor auto-sets 10s under your best. One number per attempt = how long you lasted, which is also how far into the song you got — raw entries fill the 3:24 bar.";
+}
+function logPanel(){
+  return `<div class="panel"><div class="panelRow">
+      <div class="field"><span class="lab">Exercise</span>
+        <div class="seg" id="segLift">
+          <button class="${ui.lift==="pull"?"on ember":""}" data-lift="pull">Pull-ups</button>
+          <button class="${ui.lift==="dip"?"on ember":""}" data-lift="dip">Dips</button></div></div>
+      <div class="field"><span class="lab">Time lasted</span>
+        <input type="text" inputmode="numeric" placeholder="124 = 1:24" id="inT"></div>
+      <div class="field"><span class="lab">Band?</span>
+        <div class="seg" id="segBand">
+          <button class="${!ui.band?"on":""}" data-bb="0">No</button>
+          <button class="${ui.band?"on steel":""}" data-bb="1">Band</button></div></div>
+      <div class="field"><span class="lab">Date</span>
+        <input type="date" id="inD" value="${ui.date}" max="${todayStr()}"></div>
+      <button class="btn" id="logBtn">Log it</button>
+    </div>
+    <div class="inputHint">type 124 → 1:24 · 100 → 1:00 · 45 → 0:45 · or 1:24 · change the date to backfill</div>
+    <div class="recent">${recentList()}</div></div>`;
+}
+function recentList(){
+  let all=[]; LIFTS.forEach(L=>DB[KEY(L.k)].logs.forEach((l,i)=>all.push({...l,k:L.k,n:L.n,i})));
+  all=all.sort((a,b)=> a.d<b.d?1 : a.d>b.d?-1 : 0).slice(0,8);
+  if(!all.length) return `<div class="secTitle">Recent</div><div class="empty">No attempts logged yet — add your first time above.</div>`;
+  return `<div class="secTitle">Recent</div>`+all.map(l=>`<div class="row">
+    <span class="lift">${l.n.replace("Pull-ups","Pulls")}</span>
+    <span class="date">${l.d.slice(5)}</span>
+    <span class="tag ${l.band?"band":"raw"}">${l.band?"band":"raw"}</span>
+    <span class="t">${fmt(l.t)}</span>
+    <button class="x" data-del="${l.k}:${l.i}" title="remove">✕</button></div>`).join("");
+}
+function dashboard(){
+  return `<div class="grid">`+LIFTS.map(L=>{
+    const a=analyze(L.k); const has=a.ceiling!=null;
+    let topPct=50;
+    if(a.last&&!a.last.band&&has&&a.ceiling>a.floor){ const r=(a.ceiling-a.last.t)/(a.ceiling-a.floor); topPct=14+Math.max(-0.3,Math.min(1.3,r))*(62-14); }
+    const spark=a.logs.slice(-7); const smax=Math.max(...spark.map(l=>l.t),1);
+    return `<div class="card">
+      <div class="lifthead"><span class="liftname">${L.n}</span><span class="badge ${a.status}">${statusText(a.status)}</span></div>
+      <div class="gaugeRow">
+        <div class="gauge">${has?`<div class="gCeil"></div><div class="gFloor"></div>`:``}${a.last?`<div class="gToday" style="top:${topPct}%"></div>`:``}</div>
+        <div class="stats">
+          <div class="stat ceil"><div class="lab">Ceiling · chase</div><div class="val">${fmt(a.ceiling)}</div><div class="hint">your best — beat it fresh</div></div>
+          <div class="stat floor"><div class="lab">Floor · defend</div><div class="val">${fmt(a.floor)}</div><div class="hint">never finish under this</div></div></div></div>
+      <div class="metaRow">
+        <div class="meta"><div class="lab">This week</div><div class="v" style="color:var(--ember)">${fmt(a.tw)}</div></div>
+        <div class="meta"><div class="lab">Last week</div><div class="v" style="color:var(--muted)">${fmt(a.pw)}</div></div>
+        <div class="meta"><div class="lab">Banded best</div><div class="v" style="color:var(--steel)">${fmt(a.bestBand)}</div></div></div>
+      ${spark.length?`<div class="spark">${spark.map(l=>{const h=Math.max(3,Math.round(l.t/smax*38));return `<div class="bar ${l.band?"band":"raw"}" style="height:${h}px" title="${l.d}: ${fmt(l.t)}"></div>`;}).join("")}</div>`:``}
+    </div>`;
+  }).join("")+`</div>`;
+}
+function songSection(){
+  return LIFTS.map(L=>{
+    const a=analyze(L.k); const pct=Math.min(100,Math.round(a.reach/SONG*100));
+    return `<div class="songCard">
+      <div class="songHead"><span class="songName">${L.n}</span><span class="songPct">${pct}% of 3:24</span></div>
+      <div class="reach">furthest <b>unassisted</b>: <b>${fmt(a.reach)}</b> · band-assisted full songs: <b style="color:var(--steel)">${a.bandFull}</b></div>
+      <div class="track"><div class="fill" style="width:${pct}%"></div>
+        ${HOLDS.map(h=>{const x=h.t/SONG*100;return `<div class="mark ${h.cls}" style="left:${x}%"></div><div class="markLab ${h.cls}" style="left:${x}%">${h.l.split("\n").join("<br>")}</div>`;}).join("")}
+        <div class="mark fin" style="left:100%"></div><div class="markLab fin" style="left:100%">3:24<br>✓ done</div></div>
+    </div>`;
+  }).join("");
+}
+function planSection(){
+  const rows=[
+    ["P1 · wk 1–3","Base &amp; break the wall","Active hangs · dips get a 2nd set · push pull-ups through 1:29","~1:30 both"],
+    ["P2 · wk 4–7","Extend + band in","Ceiling → 2:00 · 1×/wk band full-song for pacing","~2:00 · banded song"],
+    ["P3 · wk 8–11","Push + wean band","Ceiling → 2:30 · band fewer reps · log where raw dies","~2:30 · light band"],
+    ["P4 · wk 12–14","Bridge to the song","Ceiling → 3:00 · raw attempts, band only at the very end","Finish 3:24"]
+  ];
+  return `<div class="secTitle">The plan · ~100 days to the standard song</div>
+  <div class="songCard" style="padding-bottom:18px">
+    ${rows.map(r=>`<div class="phase"><span class="phN">${r[0]}</span><span class="phTitle">${r[1]}<span>${r[2]}</span></span><span class="phTgt">${r[3]}</span></div>`).join("")}</div>`;
+}
+/* ---- wiring ---- */
+function wire(){
+  document.querySelectorAll("#segLift [data-lift]").forEach(b=>b.onclick=()=>{ui.lift=b.dataset.lift;syncSeg();});
+  document.querySelectorAll("#segBand [data-bb]").forEach(b=>b.onclick=()=>{ui.band=b.dataset.bb==="1";syncSeg();});
+  const dEl=document.getElementById("inD"); if(dEl) dEl.onchange=()=>{ui.date=dEl.value||todayStr();};
+  const lb=document.getElementById("logBtn"); if(lb) lb.onclick=doLog;
+  const t=document.getElementById("inT"); if(t) t.addEventListener("keydown",e=>{if(e.key==="Enter")doLog();});
+  document.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{ const[k,i]=b.dataset.del.split(":"); DB[KEY(k)].logs.splice(+i,1); save(k); render(); });
+}
+function syncSeg(){
+  document.querySelectorAll("#segLift [data-lift]").forEach(b=>{b.className=b.dataset.lift===ui.lift?"on ember":"";});
+  document.querySelectorAll("#segBand [data-bb]").forEach(b=>{const on=(b.dataset.bb==="1")===ui.band;b.className=on?(ui.band?"on steel":"on"):"";});
+}
+function doLog(){
+  const t=document.getElementById("inT"); const v=parseT(t.value);
+  if(v==null||v<=0){ t.focus(); return; }
+  DB[KEY(ui.lift)].logs.push({d:ui.date||todayStr(), t:v, band:ui.band});
+  save(ui.lift); t.value=""; render();
+}
+load(); render();
+if("serviceWorker" in navigator){ window.addEventListener("load",()=>{ try{ navigator.serviceWorker.register("sw.js"); }catch(e){} }); }
+</script>
+</body>
+</html>
